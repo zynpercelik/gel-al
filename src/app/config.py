@@ -3,11 +3,14 @@ import datetime
 
 
 class BaseConfig:
-    SQLALCHEMY_DATABASE_URI = 'postgresql://%s:%s@%s/%s' % (
-        os.getenv('POSTGRES_USER', 'postgres'),
-        os.getenv('POSTGRES_PASSWORD', ''),
-        os.getenv('POSTGRES_ADDRESS', 'localhost'),
-        os.getenv('POSTGRES_DB', 'postgres'))
+    # SQLALCHEMY_DATABASE_URI = 'postgresql://%s:%s@%s/%s' % (
+    #     os.getenv('POSTGRES_USER', 'postgres'),
+    #     os.getenv('POSTGRES_PASSWORD', ''),
+    #     os.getenv('POSTGRES_ADDRESS', 'localhost'),
+    #     os.getenv('POSTGRES_DB', 'postgres'))
+
+    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:boss123@localhost/metabol'
+    # 'postgresql://postgres:boss123@localhost/analysis2'
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JWT_EXPIRATION_DELTA = datetime.timedelta(days=25)
@@ -16,6 +19,7 @@ class BaseConfig:
                                   'redis://localhost:6379')
     CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND',
                                       'redis://localhost:6379')
+
     try:
         SECRET_KEY = open('../secret.txt').read()
     except:

@@ -24,6 +24,7 @@ class UserSchema(ma.ModelSchema):
     email = fields.Email(required=True)
     affiliation = fields.String(required=True)
     password = fields.String(required=True, load_only=True)
+    # confirmPassword = fields.String(required=True, load_only=True)
 
     class Meta:
         model = User

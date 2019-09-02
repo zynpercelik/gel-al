@@ -5,7 +5,7 @@ from flask_jwt import jwt_required, current_identity
 from ..app import app
 from ..schemas import *
 from ..models import db, User, Analysis
-
+from json import dump,dumps
 
 @app.route("/spec")
 def spec():
@@ -56,14 +56,26 @@ def sign_up():
       201:
         description: User created
     """
+    print (request.json , "\n-----------------------------\n")
     (data, error) = UserSchema().load(request.json)
     if error:
         return jsonify(error), 400
+
     if User.query.filter_by(email=data.email).first():
         return jsonify({'email': ['this email in use']}), 400
     db.session.add(data)
     db.session.commit()
     return ''
+
+    # if User.query.filter_by(email=data["email"]).first():
+    #     return jsonify({'email': ['this email in use']}), 400
+    # userObj = User(name = data["name"],surname=data['surname'],email=data["email"],affiliation=data['affiliation'],password=data['password'])
+    # db.session.add(userObj)
+    # db.session.commit()
+    # return ''
+
+
+
 
 
 @app.route('/auth/info')

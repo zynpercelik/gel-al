@@ -26,6 +26,10 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r>' % self.email
 
+# data = User(name ='taj',surname='saleh',email='tajothman@std.sehir.edu.tr',affiliation='none',password='123456789')
+#     dbSession.add(data)
+#     dbSession.commit()
+
 
 class Analysis(db.Model):
     id = db.Column(db.Integer, primary_key=True)

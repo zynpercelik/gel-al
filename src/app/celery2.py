@@ -1,5 +1,8 @@
+
+
 from celery import Celery
 from .app import app
+from subprocess import call
 
 
 def make_celery(app):
@@ -20,3 +23,4 @@ def make_celery(app):
 
 
 celery = make_celery(app)
+
