@@ -1,13 +1,11 @@
 from functools import reduce
-
 from flask import jsonify, request
 from flask_jwt import jwt_required, current_identity
 from sqlalchemy import and_
 from sqlalchemy.types import Float
-
 from ..utils import similarty_dict
 from ..visualization import HeatmapVisualization
-
+import time
 from ..app import app
 from ..schemas import *
 from ..models import db, User, Analysis
@@ -162,7 +160,6 @@ def analysis_detail(id):
         return '', 401
     return AnalysisSchema().jsonify(analysis)
 
-
 @app.route('/analysis/most-similar-diseases/<id>')
 def most_similar_diseases(id: int):
     """
@@ -226,7 +223,6 @@ def user_analysis():
     return AnalysisSchema(many=True).jsonify(
         current_identity.analysis.filter_by(type='private').with_entities(
             Analysis.id, Analysis.name, Analysis.status))
-
 
 @app.route('/analysis/search-by-change', methods=['POST'])
 def search_analysis_by_change():

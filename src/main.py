@@ -14,17 +14,12 @@ import uuid
 import json
 from collections import defaultdict
 import pickle
-import pandas as pd
-from metabolitics.preprocessing import MetaboliticsPipeline
+from sklearn.pipeline import  Pipeline
 from app.app import app
 from app.models import db
-from app.preprocessing.pathway_fva_scaler import PathwayFvaScaler
-from app.preprocessing.reaction_dist_scaler import ReactionDiffScaler
-from app.preprocessing.dynamic_preprocessing import DynamicPreprocessing
 from sklearn_utils.utils import SkUtilsIO
-from app.services.data_reader import DataReader
-# from app.celery2 import make_celery
-# from app.celery2 import celery3
+from metabolitics.preprocessing import *
+from metabolitics.utils import load_network_model
 
 @click.group()
 def cli():
@@ -66,7 +61,7 @@ def generate_angular_friendly_model():
     '''
     This function convert json model into angular friendly json
     '''
-    model = DataReader().read_network_model()
+    model = load_network_model()
     model_json = json.load(open('../dataset/network/recon2.json'))
 
     reactions, metabolites = model_json['reactions'], model_json['metabolites']
@@ -90,49 +85,35 @@ def generate_angular_friendly_model():
     json.dump(model_json, open('../outputs/ng-recon.json', 'w'))
 
 
-@cli.command()
-@click.argument('num_of_reactions')
-def healty_for_heatmap(num_of_reactions):
-
-    (X, y) = DataReader().read_fva_solutions('fva_without.transports.txt')
-    X = Pipeline([
-        ('flux-diff-scaler', ReactionDiffScaler()),
-        ('pathway_scoring', PathwayFvaScaler()),
-    ]).fit_transform(X, y)
-
-    df = pd.DataFrame(ix for ix, iy in zip(X, y) if iy == 'h')
-
-    hjson = {
-        'x': [i[:-4] for i in df],
-        'z': df.values.tolist(),
-        'type': 'heatmap'
-    }
-
-    json.dump(hjson, open('../outputs/healties_heatmap.json', 'w'))
-
 
 @cli.command()
 def healties_model():
-
-
+    disease_name = 'BC'
     path = '../datasets/diseases/%s.csv' % disease_name
-    X, y = SkUtilsIO(path).from_csv(label_column='labels')
+    X, y = SkUtilsIO(path).from_csv(label_column='stage')
+    y = ['bc' if i != 'h' else 'healthy' for i in y]
 
     pipe = MetaboliticsPipeline([
-        'metabolite-name-mapping',
-        'standard-scaler',
-        'metabolitics-transformer',
+        # 'metabolite-name-mapping-toy',
+        # 'metabolite-name-mapping',
+        'naming-toy',
+        'fold-change-scaler',
     ])
     X_t = pipe.fit_transform(X, y)
-    # pre_model = MetaboliticsPipeline(['', ''])
 
-    pre_model = DynamicPreprocessing(['naming', 'basic-fold-change-scaler'])
-    X = pre_model.fit_transform(list(X), y)
-
-    model = DynamicPreprocessing(['fva', 'flux-diff'])
-    model.fit(X, y)
-    with open('../outputs/api_model.p', 'wb') as f:
+    model = Pipeline([
+        ('metabolitics-transformer', MetaboliticsTransformer(n_jobs=1)),
+        ('reaction-diff', ReactionDiffTransformer())
+    ])
+    # model = MetaboliticsPipeline([
+    #     'metabolitics-transformer',
+    #     'reaction-diff',
+    # ])
+    model.fit(X_t, y)
+    with open('../models/api_model.p', 'wb') as f:
         pickle.dump(model, f)
+
+
 if __name__ == '__main__':
     cli()
 # cli()
