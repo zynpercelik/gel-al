@@ -109,7 +109,7 @@ class Analysis(db.Model):
     def clean_name_tag(self, dataset):
         cleaned_dataset = list()
         for d in dataset:
-            cleaned_dataset.append({k[:-4]: v for k, v in d.items()})
+            cleaned_dataset.append({k: v for k, v in d.items()})
         return cleaned_dataset
 
     def authenticated(self):
@@ -122,6 +122,9 @@ class Analysis(db.Model):
     def get_multiple(ids):
         return Analysis.query.filter(
             Analysis.id.in_(ids)).filter_by_authentication()
+
+    # query = db_session.query(User.id, User.name).filter(User.id.in_([123, 456]))
+    # results = query.all()
 
     def __repr__(self):
         return '<Analysis %r>' % self.name

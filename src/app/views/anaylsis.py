@@ -54,17 +54,17 @@ def fva_analysis():
     analysis = Analysis(
         data['name'],
         current_identity,
-        type='public' if data['public'] else 'private')
+        type= data['public'] )
     db.session.add(analysis)
     db.session.commit()
     analysis_id = analysis.id
-    print (analysis_id)
+    # print (analysis_id)
     save_analysis.delay(analysis_id, data['concentration_changes'])
     return jsonify({'id': analysis_id})
 
 
 
-@app.route('/analysis/set')
+@app.route('/analysis/set', methods=['POST'])
 def user_analysis_set():
     """
     List of analysis of user
@@ -78,15 +78,19 @@ def user_analysis_set():
           type: string
           required: true
     """
-    analyses = list(Analysis.get_multiple(request.args.values()))
-    if len(analyses) != len(request.args):
-        return '', 401
+    data = request.json['data']
+    analyses = Analysis.get_multiple(data.values())
+    print (data,'------------------>1')
+    #
+    # if len(analyses) != len(request.args):
+    #     return '', 401
     X = [i.results_pathway for i in analyses]
     y = [i.name for i in analyses]
+    # print (analyses,'------------------>2')
     return AnalysisSchema(many=True).jsonify(analyses)
 
 
-@app.route('/analysis/visualization')
+@app.route('/analysis/visualization', methods=['POST'])
 def analysis_visualization():
     """
     List of analysis of user
@@ -100,11 +104,24 @@ def analysis_visualization():
           type: string
           required: true
     """
-    analyses = list(Analysis.get_multiple(request.args.values()))
-    if len(analyses) != len(request.args):
-        return '', 401
+
+    data = request.json['data']
+    analyses = Analysis.get_multiple(data.values())
+    print (data,'------------------>1')
+    #
+    # if len(analyses) != len(request.args):
+    #     return '', 401
+    # X = [i.results_pathway for i in analyses]
+    # y = [i.name for i in analyses]
+
+
+    # analyses = list(Analysis.get_multiple(request.args.values()))
+    # if len(analyses) != len(request.args):
+    #     return '', 401
     X = [i.results_pathway[0] for i in analyses]
+
     y = [i.name for i in analyses]
+
     return jsonify(HeatmapVisualization(X, y).clustered_data())
 
 
