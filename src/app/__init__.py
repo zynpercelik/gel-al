@@ -1,4 +1,4 @@
-from .celery2 import *
+from .celery import *
 from .models import *
 from .auth import *
 from .schemas import *
