@@ -107,7 +107,6 @@ def analysis_visualization():
 
     data = request.json['data']
     analyses = Analysis.get_multiple(data.values())
-    print (data,'------------------>1')
     #
     # if len(analyses) != len(request.args):
     #     return '', 401

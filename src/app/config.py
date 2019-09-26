@@ -3,13 +3,13 @@ import datetime
 
 
 class BaseConfig:
-    # SQLALCHEMY_DATABASE_URI = 'postgresql://%s:%s@%s/%s' % (
-    #     os.getenv('POSTGRES_USER', 'postgres'),
-    #     os.getenv('POSTGRES_PASSWORD', ''),
-    #     os.getenv('POSTGRES_ADDRESS', 'localhost'),
-    #     os.getenv('POSTGRES_DB', 'postgres'))
+    SQLALCHEMY_DATABASE_URI = 'postgresql://%s:%s@%s/%s' % (
+        os.getenv('POSTGRES_USER', 'postgres'),
+        os.getenv('POSTGRES_PASSWORD', ''),
+        os.getenv('POSTGRES_ADDRESS', 'localhost'),
+        os.getenv('POSTGRES_DB', 'postgres'))
 
-    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:boss123@localhost/metabol'
+    # SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:boss123@localhost/metabol'
     # 'postgresql://postgres:boss123@localhost/analysis2'
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
