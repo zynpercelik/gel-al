@@ -8,9 +8,11 @@ from ..visualization import HeatmapVisualization
 import time
 from ..app import app
 from ..schemas import *
-from ..models import db, User, Analysis
+from ..models import db, User, Analysis, MetabolomicsData, Method
 from ..tasks import save_analysis
-
+from ..base import *
+from ..dpm import *
+import datetime
 
 @app.route('/analysis/fva', methods=['POST'])
 @jwt_required()
@@ -48,19 +50,57 @@ def fva_analysis():
       401:
         description: Analysis is not yours
     """
-    (data, error) = AnalysisInputSchema().load(request.json)
-    if error:
-        return jsonify(error), 400
-    analysis = Analysis(
-        data['name'],
-        current_identity,
-        type= data['public'] )
+    # (data, error) = AnalysisInputSchema().load(request.json)
+    data = request.json
+    # print (request.json)
+    # if error:
+    #     return jsonify(error), 400
+
+    if not request.json:
+        return "", 404
+    changes = request.json['concentration_changes']
+
+    user = User.query.get(2)
+    metabolomics_data = MetabolomicsData(
+        metabolomics_data = changes,
+        owner_email = 'tajtest2019@gmail.com',
+        is_public = True if request.json['public'] else False
+    )
+    db.session.add(metabolomics_data)
+    db.session.commit()
+
+    analysis = Analysis(name =request.json['name'], user = user)
+    analysis.name = request.json['name']
+    analysis.type = 'public' if request.json['public'] else 'private'
+    analysis.start_time = datetime.datetime.now()
+
+    analysis.owner_user_id = user.id
+    analysis.owner_email = user.email
+    analysis.method_id = 1
+    analysis.metabolomics_data_id = metabolomics_data.id
+    analysis.dataset_id = 0
+
+    # print (analysis.method_id, analysis.metabolomics_data_id)
+
     db.session.add(analysis)
     db.session.commit()
-    analysis_id = analysis.id
-    # print (analysis_id)
-    save_analysis.delay(analysis_id, data['concentration_changes'])
-    return jsonify({'id': analysis_id})
+
+    save_analysis.delay(analysis.id, data['concentration_changes'])
+    return jsonify({'id': analysis.id})
+
+
+    #
+    # temp = "public" if data['public'] else "private"
+    # analysis = Analysis(
+    #     data['name'],
+    #     current_identity,
+    #     type= temp)
+    # db.session.add(analysis)
+    # db.session.commit()
+    # analysis_id = analysis.id
+    # # print (analysis_id)
+    # save_analysis.delay(analysis_id, data['concentration_changes'])
+    # return jsonify({'id': analysis_id})
 
 
 
@@ -124,57 +164,57 @@ def analysis_visualization():
     return jsonify(HeatmapVisualization(X, y).clustered_data())
 
 
-@app.route('/analysis/<type>')
-def disease_analysis(type: str):
-    """
-    List of disease analysis avaliable in db
-    ---
-    tags:
-        - analysis
-    parameters:
-        -
-          name: authorization
-          in: header
-          type: string
-          required: true
-    """
-    return AnalysisSchema(many=True).jsonify(
-        Analysis.query.filter_by(type=type).with_entities(
-            Analysis.id, Analysis.name, Analysis.status))
+# @app.route('/analysis/<type>')
+# def disease_analysis(type: str):
+#     """
+#     List of disease analysis avaliable in db
+#     ---
+#     tags:
+#         - analysis
+#     parameters:
+#         -
+#           name: authorization
+#           in: header
+#           type: string
+#           required: true
+#     """
+#     return AnalysisSchema(many=True).jsonify(
+#         Analysis.query.filter_by(type=type).with_entities(
+#             Analysis.id, Analysis.name, Analysis.status))
 
-
-@app.route('/analysis/detail/<id>')
-def analysis_detail(id):
-    """
-    Get analysis detail from id
-    ---
-    tags:
-      - analysis
-    parameters:
-        -
-          name: authorization
-          in: header
-          type: string
-          required: true
-        -
-          name: id
-          in: path
-          type: integer
-          required: true
-    responses:
-      200:
-        description: Analysis info
-      404:
-        description: Analysis not found
-      401:
-        description: Analysis is not yours
-    """
-    analysis = Analysis.query.get(id)
-    if not analysis:
-        return '', 404
-    if not analysis.authenticated():
-        return '', 401
-    return AnalysisSchema().jsonify(analysis)
+#
+# @app.route('/analysis/detail/<id>')
+# def analysis_detail1(id):
+#     """
+#     Get analysis detail from id
+#     ---
+#     tags:
+#       - analysis
+#     parameters:
+#         -
+#           name: authorization
+#           in: header
+#           type: string
+#           required: true
+#         -
+#           name: id
+#           in: path
+#           type: integer
+#           required: true
+#     responses:
+#       200:
+#         description: Analysis info
+#       404:
+#         description: Analysis not found
+#       401:
+#         description: Analysis is not yours
+#     """
+    # analysis = Analysis.query.get(id)
+    # if not analysis:
+    #     return '', 404
+    # if not analysis.authenticated():
+    #     return '', 401
+    # return AnalysisSchema().jsonify(analysis)
 
 @app.route('/analysis/most-similar-diseases/<id>')
 def most_similar_diseases(id: int):
@@ -262,3 +302,95 @@ def search_analysis_by_change():
         Analysis.query.filter_by_change_many(data)
         .filter_by_change_amount_many(data).filter_by_authentication()
         .with_entities(Analysis.id, Analysis.name, Analysis.status))
+
+
+############################################################# new parts
+
+@app.route('/analysis/direct-pathway-mapping', methods=['GET', 'POST'])
+def direct_pathway_mapping():
+    if not request.json:
+        return "", 404
+    changes = request.json['concentration_changes']
+
+    user = User.query.get(1)
+    metabolomics_data = MetabolomicsData(
+        metabolomics_data = changes,
+        owner_email = 'alperdokay@std.sehir.edu.tr',
+        is_public = True if request.json['public'] else False
+    )
+    db.session.add(metabolomics_data)
+    db.session.commit()
+
+    analysis = Analysis(name =request.json['name'], user = user)
+    analysis.name = request.json['name']
+    analysis.status = True
+    analysis.type = 'public' if request.json['public'] else 'private'
+    analysis.start_time = datetime.datetime.now()
+    analysis.end_time = datetime.datetime.now()
+
+    analysis.owner_user_id = user.id
+    analysis.owner_email = user.email
+    analysis.method_id = 2
+    analysis.metabolomics_data_id = metabolomics_data.id
+    analysis.dataset_id = 0
+
+    print (analysis.method_id, analysis.metabolomics_data_id)
+    analysis_runs = DirectPathwayMapping(changes)  # Forming the instance
+    # fold_changes
+    analysis_runs.run()  # Making the analysis
+    analysis.results_pathway = [analysis_runs.result_pathways]
+    analysis.results_reaction = [analysis_runs.result_reactions]
+
+    db.session.add(analysis)
+    db.session.commit()
+
+    # analysis.owner_user_id = user.id
+    # analysis.owner_email = user.email
+    # analysis.method_id = 2
+    # analysis.metabolomics_data_id = metabolomics_data.id
+    # analysis.dataset_id = 0
+    # analysis.start_time = datetime.datetime.now()
+    # analysis.end_time = datetime.datetime.now()
+
+    analysis_id = analysis.id
+    return jsonify({'id': analysis.id})
+
+
+@app.route('/analysis/detail/<id>')
+def analysis_detail(id):
+    analysis = Analysis.query.get(id)
+    metabolomics_data = MetabolomicsData.query.get(analysis.metabolomics_data_id)
+    method = Method.query.get(analysis.method_id)
+    data = {
+        'name': analysis.name,
+        'status': analysis.status,
+        'results_pathway': analysis.results_pathway,
+        'results_reaction': analysis.results_reaction,
+        'method': method.name,
+        'fold_changes': metabolomics_data.metabolomics_data
+    }
+    # print(jsonify(data))
+    return jsonify(data)
+
+@app.route('/analysis/<type>')
+def analysis_details(type):
+    methods = Method.query.all()
+    data = Analysis.query.filter_by(type=type).with_entities(
+        Analysis.id, Analysis.name, Analysis.status, Analysis.method_id)
+    returned_data = []
+    for test in data:
+        method = Method.query.filter_by(id=test[3]).first()
+
+        print(method)
+        returned_data.append({
+            'id': test[0],
+            'name': test[1],
+            'status': test[2],
+            'method': method.name
+        })
+        print(test)
+    return jsonify(returned_data)
+
+# @app.route('/analysis/set')
+# def analysis_set():
+# return ""

@@ -6,7 +6,7 @@ from .models import User, Analysis
 
 ma = Marshmallow(app)
 
-
+#
 class AnalysisInputSchema(Schema):
     name = fields.String(required=True)
     public = fields.String(required=True)
@@ -17,7 +17,7 @@ class PasswordChangeSchema(Schema):
     old_password = fields.String(required=True)
     new_password = fields.String(required=True)
 
-
+#
 class UserSchema(ma.ModelSchema):
     name = fields.String(required=True)
     surname = fields.String(required=True)

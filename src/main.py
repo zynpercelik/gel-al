@@ -16,7 +16,7 @@ from collections import defaultdict
 import pickle
 from sklearn.pipeline import  Pipeline
 from app.app import app
-from app.models import db
+from app.models import db, Method, User
 from sklearn_utils.utils import SkUtilsIO
 from metabolitics.preprocessing import *
 from metabolitics.utils import load_network_model
@@ -37,9 +37,9 @@ def run_api():
 
 @cli.command()
 def run_celery():
-    # call('celery -A app.celery worker')
+    call('celery -A app.celery worker')
     # celery4 = make_celery(app)
-    call('celery -A app.celery2.celery worker -l info -Q celery')
+    #call('celery -A app.celery.celery worker -l info -Q celery')
 
     # call('celery --app =app worker --loglevel=info')
     # make_celery(app)
@@ -47,7 +47,17 @@ def run_celery():
 
 @cli.command()
 def migrate():
+    db.drop_all()
     db.create_all()
+    method1 = Method(name = "Metabolitics")
+    method2 = Method(name = "Direct Pathway Mapping")
+    method3 = Method(name = "Pathway Enrichment")
+    user = User(name="Alper", surname="Dokay", email="alperdokay@sehir.edu.tr", password="test123")
+    db.session.add(method1)
+    db.session.add(method2)
+    db.session.add(method3)
+    db.session.add(user)
+    db.session.commit()
 
 
 @cli.command()

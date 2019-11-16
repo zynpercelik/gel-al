@@ -26,12 +26,47 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r>' % self.email
 
-# data = User(name ='taj',surname='saleh',email='tajothman@std.sehir.edu.tr',affiliation='none',password='123456789')
-#     dbSession.add(data)
-#     dbSession.commit()
+class Method(db.Model):
+    __tablename__ = 'methods'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String())
 
+    def __repr__(self):
+        return '<Method %r>' % self.name
+
+class MetabolomicsData(db.Model):
+    __tablename__ = 'metabolomicsdata'
+    id = db.Column(db.Integer, primary_key=True)
+    metabolomics_data = db.Column(JSON)
+    owner_email = db.Column(db.String())
+    owner_user_id = db.Column(db.Integer, nullable=True)
+    is_public = db.Column(db.Boolean)
+    disease_id = db.Column(db.Integer, db.ForeignKey('diseases.id'), nullable=True)
+    disease = db.relationship('Disease')
+
+    def __repr__(self):
+        return '<MetabolomicsData %r>' % self.email
+
+class Disease(db.Model):
+    __tablename__ = 'diseases'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String())
+    parent_id = db.Column(db.Integer, db.ForeignKey('diseases.id'), nullable=True)
+    disease = db.relationship('Disease')
+
+    def __repr__(self):
+        return '<Disease %r>' % self.name
+
+class Dataset(db.Model):
+    __tablename__ = 'datasets'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String())
+
+    def __repr__(self):
+        return '<Disease %r>' % self.name
 
 class Analysis(db.Model):
+    __tablename__ = 'analysis'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
     status = db.Column(db.Boolean)
@@ -40,8 +75,16 @@ class Analysis(db.Model):
     end_time = db.Column(db.DateTime, nullable=True)
     results_pathway = db.Column(JSON)
     results_reaction = db.Column(JSON)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user = db.relationship("User", back_populates="analysis")
+    owner_user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    user = db.relationship("User")
+    owner_email = db.Column(db.String(255))
+    metabolomics_data_id = db.Column(db.Integer, db.ForeignKey('metabolomicsdata.id'))
+    metabolomics_data = db.relationship('MetabolomicsData')
+    method_id = db.Column(db.Integer, db.ForeignKey('methods.id'))
+    method = db.relationship('Method')
+    # dataset_id = db.Column(db.Integer, db.ForeignKey('datasets.id'))
+    # dataset = db.relationship('Dataset')
+
 
     class AnalysisQuery(BaseQuery):
         def get_pathway_score(self, pathway):
@@ -109,7 +152,7 @@ class Analysis(db.Model):
     def clean_name_tag(self, dataset):
         cleaned_dataset = list()
         for d in dataset:
-            cleaned_dataset.append({k: v for k, v in d.items()})
+            cleaned_dataset.append({k[:-4]: v for k, v in d.items()})
         return cleaned_dataset
 
     def authenticated(self):
@@ -122,9 +165,6 @@ class Analysis(db.Model):
     def get_multiple(ids):
         return Analysis.query.filter(
             Analysis.id.in_(ids)).filter_by_authentication()
-
-    # query = db_session.query(User.id, User.name).filter(User.id.in_([123, 456]))
-    # results = query.all()
 
     def __repr__(self):
         return '<Analysis %r>' % self.name
