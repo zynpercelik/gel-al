@@ -214,7 +214,6 @@ def mwlab_mapper():
     mapped = {}
     mapping_metabolites = {}
     mapping_data = databaseProccesing(name)  ## dictionary or 0
-    #
     if mapping_data != 0:
         data = open("../datasets/assets/mapping_all.txt","r+").readlines()
         for line in data:
@@ -232,13 +231,10 @@ def mwlab_mapper():
                 for metabol_name1 , measurment in metabols_data.items():
                     if metabol_name1 == metabol_name2 and id in mapping_metabolites.keys():
                         liste.append([mapping_metabolites[id].strip(),float(measurment)])
-            mapped[sample] = liste
-
-        for i ,j in mapped.items():
-            print (i ,len(j), j ,"\n---------------------------------\n")
+            mapped[sample] = {"Metabolites": liste, "Label": "None"}
+        return ({"study_name":study_name,"analysis":mapped,"group":"None"})
     else:
-        return "could not process"
+        return ({1:"Error"})
 
-    return ({1:"ok"})
 
 
