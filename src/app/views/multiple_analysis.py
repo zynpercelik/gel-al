@@ -89,15 +89,17 @@ def excel_data_Prpcessing(data, meta):
     metabol = metabolc(data)
     #
     for key, value in data2.items():
-        temp = []
+        temp = {}
         for index_metas in range(0, len(value), 1):
-            temp.append([metabol[index_metas], value[index_metas]])
+            temp[metabol[index_metas]] =  value[index_metas]
         users_metabolite[key] = {"Metabolites": temp, "Label": users_labels[key]}
 
-    processed_users_data = {"study_name": study_name, "control_label": group_control_label,
+    processed_users_data = {"study_name": study_name, "group": group_control_label,
                             "analysis": users_metabolite}
     # for k,v in processed_users_data.items():
     #     print (k,v)
+    print (processed_users_data)
+
     return processed_users_data
 
 
@@ -145,6 +147,7 @@ def mwtabReader(name):
                         dicte[subject][metabol_name] =  measurment[i][subject]
                     # else:
                         # dicte[subject][metabol_name] = "0.0"
+
     return [dicte,study_title]
 
 
@@ -204,6 +207,7 @@ def mwlab_mapper():
     ## note that it can represent multiple samples
     """
 
+
     temp_name = request.json['data'].split()
     # print (name.split())
     std_id = temp_name[2].split(":")[1][2:]
@@ -227,11 +231,16 @@ def mwlab_mapper():
         for sample,metabols_data in measurments_data.items():
             mapped.setdefault(sample, {})
             liste = []
+            temp_dict = {}
             for metabol_name2,id in mapping_data[temp].items():
                 for metabol_name1 , measurment in metabols_data.items():
                     if metabol_name1 == metabol_name2 and id in mapping_metabolites.keys():
-                        liste.append([mapping_metabolites[id].strip(),float(measurment)])
-            mapped[sample] = {"Metabolites": liste, "Label": "None"}
+                        # liste.append([mapping_metabolites[id].strip(),float(measurment)])
+                        temp_dict[mapping_metabolites[id].strip()]=float(measurment)
+
+            mapped[sample] = {"Metabolites": temp_dict, "Label": "None"}
+        print ({"study_name":study_name,"analysis":mapped,"group":"None"})
+
         return ({"study_name":study_name,"analysis":mapped,"group":"None"})
     else:
         return ({1:"Error"})
