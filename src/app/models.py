@@ -61,6 +61,9 @@ class Dataset(db.Model):
     __tablename__ = 'datasets'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String())
+    method_id = db.Column(db.Integer, db.ForeignKey('methods.id'))
+    method = db.relationship('Method')
+    status = db.Column(db.Boolean)
 
     def __repr__(self):
         return '<Disease %r>' % self.name
@@ -69,7 +72,7 @@ class Analysis(db.Model):
     __tablename__ = 'analysis'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
-    status = db.Column(db.Boolean)
+    # status = db.Column(db.Boolean)
     type = db.Column(db.String(255))
     start_time = db.Column(db.DateTime, nullable=True)
     end_time = db.Column(db.DateTime, nullable=True)
@@ -80,10 +83,10 @@ class Analysis(db.Model):
     owner_email = db.Column(db.String(255))
     metabolomics_data_id = db.Column(db.Integer, db.ForeignKey('metabolomicsdata.id'))
     metabolomics_data = db.relationship('MetabolomicsData')
-    method_id = db.Column(db.Integer, db.ForeignKey('methods.id'))
-    method = db.relationship('Method')
-    # dataset_id = db.Column(db.Integer, db.ForeignKey('datasets.id'))
-    # dataset = db.relationship('Dataset')
+    # method_id = db.Column(db.Integer, db.ForeignKey('methods.id'))
+    # method = db.relationship('Method')
+    dataset_id = db.Column(db.Integer, db.ForeignKey('datasets.id'))
+    dataset = db.relationship('Dataset')
 
 
     class AnalysisQuery(BaseQuery):
