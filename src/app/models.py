@@ -45,7 +45,7 @@ class MetabolomicsData(db.Model):
     disease = db.relationship('Disease')
 
     def __repr__(self):
-        return '<MetabolomicsData %r>' % self.email
+        return '<MetabolomicsData %r>' % self.owner_email
 
 class Disease(db.Model):
     __tablename__ = 'diseases'
@@ -53,6 +53,7 @@ class Disease(db.Model):
     name = db.Column(db.String())
     parent_id = db.Column(db.Integer, db.ForeignKey('diseases.id'), nullable=True)
     disease = db.relationship('Disease')
+    synonym = db.Column(db.String())
 
     def __repr__(self):
         return '<Disease %r>' % self.name
@@ -64,6 +65,7 @@ class Dataset(db.Model):
     method_id = db.Column(db.Integer, db.ForeignKey('methods.id'))
     method = db.relationship('Method')
     status = db.Column(db.Boolean)
+    group = db.Column(db.String())
 
     def __repr__(self):
         return '<Disease %r>' % self.name
@@ -87,6 +89,7 @@ class Analysis(db.Model):
     # method = db.relationship('Method')
     dataset_id = db.Column(db.Integer, db.ForeignKey('datasets.id'))
     dataset = db.relationship('Dataset')
+    label = db.Column(db.String())
 
 
     class AnalysisQuery(BaseQuery):

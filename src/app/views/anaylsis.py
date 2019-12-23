@@ -8,7 +8,7 @@ from ..visualization import HeatmapVisualization
 import time
 from ..app import app
 from ..schemas import *
-from ..models import db, User, Analysis, MetabolomicsData, Method, Dataset
+from ..models import db, User, Analysis, MetabolomicsData, Method, Dataset, Disease
 from ..tasks import save_analysis
 from ..base import *
 from ..dpm import *
@@ -49,6 +49,7 @@ def fva_analysis():
               - concentration_changes
             properties:
               name:
+              name:
                   type: string
                   description: name of analysis
               concentration_changes:
@@ -78,15 +79,16 @@ def fva_analysis():
     # )
     # db.session.add(metabolomics_data)
     # db.session.commit()
-    study = Dataset(name=sample_data['study_name'])
+
+
+    study = Dataset(name=request.json['study_name'], method_id=1)
     db.session.add(study)
     db.session.commit()
-    for key,value in sample_data["analysis"].items():  # user as key, value {metaboldata , label}
+    for key,value in request.json["analysis"].items():  # user as key, value {metaboldata , label}
         metabolomics_data = MetabolomicsData(
             metabolomics_data = value["Metabolites"],
             owner_email = 'alperdokay@std.sehir.edu.tr',
-            # is_public = True if request.json['public'] else False
-            is_public =  True
+            is_public = True if request.json['public'] else False
         )
 
         db.session.add(metabolomics_data)
@@ -94,16 +96,14 @@ def fva_analysis():
 
         analysis = Analysis(name=key, user=user)
         analysis.name = key
-        analysis.status = True
         analysis.type = 'public'
         analysis.start_time = datetime.datetime.now()
 
 
         analysis.owner_user_id = user.id
         analysis.owner_email = user.email
-        analysis.method_id = 1
         analysis.metabolomics_data_id = metabolomics_data.id
-        analysis.dataset_id = 0
+        analysis.dataset_id = study.id
         # print (analysis.method_id, analysis.metabolomics_data_id)
 
         db.session.add(analysis)
@@ -285,7 +285,7 @@ def most_similar_diseases(id: int):
         return '', 401
 
     row_disease_analyses = Analysis.query.filter_by(
-        type='disease').with_entities(Analysis.name,
+        type='public').with_entities(Analysis.name,
                                       Analysis.results_pathway).all()
 
     names, disease_analyses = zip(*[(i[0], i[1][0])
@@ -293,7 +293,7 @@ def most_similar_diseases(id: int):
 
     sims = similarty_dict(analysis.results_pathway[0], list(disease_analyses))
     top_5 = sorted(zip(names, sims), key=lambda x: x[1], reverse=True)[:5]
-
+    print("Worked!")
     return jsonify(dict(top_5))
 
 @app.route('/analysis/<type>')
@@ -312,7 +312,8 @@ def analysis_details(type):
                 'id': item.id,
                 'name': item.name,
                 'analyses': analysis_data,
-                'method': method.name
+                'method': method.name,
+                'disease': 'Breast Cancer'
             })
     return jsonify(returned_data)
     # for test in data:
@@ -355,7 +356,8 @@ def user_analysis():
                 'id': item.id,
                 'name': item.name,
                 'analyses': analysis_data,
-                'method': method.name
+                'method': method.name,
+                'disease': 'Breast Cancer'
             })
     return jsonify(returned_data)
 
@@ -427,11 +429,31 @@ def search_analysis_by_change():
     (data, error) = PathwayChangesScheme().load(request.json, many=True)
     if error:
         return jsonify(error), 400
-
-    return AnalysisSchema(many=True).jsonify(
-        Analysis.query.filter_by_change_many(data)
-        .filter_by_change_amount_many(data).filter_by_authentication()
-        .with_entities(Analysis.id, Analysis.name))
+    analyses = Analysis.query.filter_by_change_many(data).filter_by_change_amount_many(data).filter_by_authentication().with_entities(Analysis.id, Analysis.name, Analysis.dataset_id)
+    temp_data = {}
+    for analysis in analyses:
+        temp_data.setdefault(analysis.dataset_id, [])
+        temp_data[analysis.dataset_id].append((analysis.id, analysis.name))
+    print(temp_data)
+    returned_data = []
+    for item in temp_data:
+        print(item)
+        study = Dataset.query.get(item)
+        method = Method.query.get(study.method_id)
+        analysis_data = []
+        for (id, name) in temp_data[item]:
+            analysis_data.append({'id': id, 'name': name})
+        returned_data.append({
+            'id': study.id,
+            'name': study.name,
+            'analyses': analysis_data,
+            'method': method.name
+        })
+    return jsonify(returned_data)
+    # return AnalysisSchema(many=True).jsonify(
+    #     Analysis.query.filter_by_change_many(data)
+    #     .filter_by_change_amount_many(data).filter_by_authentication()
+    #     .with_entities(Analysis.id, Analysis.name))
 ############################################################# test parts
 @app.route('/analysis/search-by-metabol', methods=['POST'])
 def search_analysis_by_metabol():
@@ -485,15 +507,17 @@ def direct_pathway_mapping():
     # changes = request.json['concentration_changes']
     user = User.query.get(1)
     # study_name =
-    study = Dataset(name=sample_data['study_name'], method_id=2, status=True)
+    print(request.json)
+    study = Dataset(name=request.json['study_name'], method_id=2, status=True)
     db.session.add(study)
     db.session.commit()
-    for key,value in sample_data["analysis"].items():  # user as key, value {metaboldata , label}
+
+    for key,value in request.json["analysis"].items():  # user as key, value {metaboldata , label}
         metabolomics_data = MetabolomicsData(
             metabolomics_data = value["Metabolites"],
-            owner_email = 'alperdokay@std.sehir.edu.tr',
-            # is_public = True if request.json['public'] else False
-            is_public =  True
+            # owner_email = 'alperdokay@std.sehir.edu.tr',
+            is_public = True if request.json['public'] else False
+            # is_public =  True
         )
         db.session.add(metabolomics_data)
         db.session.commit()
@@ -530,8 +554,16 @@ def direct_pathway_mapping():
     analysis_id = analysis.id
     return jsonify({'id': analysis.id})
 
-
-
+@app.route('/diseases/all', methods=['GET', 'POST'])
+def get_diseases():
+    data = Disease.query.all()
+    returned_data = []
+    for item in data:
+        returned_data.append({
+            "name": item.name,
+            "synonym": item.synonym
+        })
+    return jsonify(returned_data)
 
 
 
