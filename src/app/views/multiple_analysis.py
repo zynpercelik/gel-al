@@ -26,12 +26,12 @@ def excel():
     data = request.json['data']
     meta = request.json['meta']
     processed_data = excel_data_Prpcessing(data,meta)
-    # print (processed_data)
-    # study_id = 1
-    # group_avg(study_id)
-
+    new_data = group_avg(processed_data)
+    for k,v in new_data.items():
+        processed_data['analysis'][k] = v
+    # processed_data['analysis']
+    print (processed_data)
     return jsonify(processed_data)
-    # return jsonify({1:1})
 
 
 
@@ -270,11 +270,24 @@ def mwlab_mapper():
                     else:
                         blacklist.append(metabol_name1)
 
-            mapped[sample] = {"Metabolites": temp_dict, "Label": "None"}
+            mapped[sample] = {"Metabolites": temp_dict, "Label": "not_provided"}
         # print ({"study_name":study_name,"analysis":mapped,"group":"None"})
         # print(len(blacklist))
         # print(blacklist)
-        return ({"study_name":study_name,"analysis":mapped,"group":"None","blacklist":blacklist})
+        final = {"study_name":study_name,"analysis":mapped,"group":"not_provided","blacklist":blacklist}
+
+        new_data = group_avg(final)
+        for k2, v2 in new_data.items():
+            final['analysis'][k2] = v2
+        return (final)
+
+
+    ########3
+
+
+
+
+
     else:
         return ({1:"Error"})
     # return jsonify({1:1})
@@ -283,75 +296,71 @@ def mwlab_mapper():
 
 
 
-def group_avg(study_id):
+def group_avg(sample_data3):
 
     """ a function to find group and labels averages for a given study
     inputs:
     - metabolites : {studyName:"study1", analysis:{"case1:{metabolites:{metabolite:value,...},label:"Label"}  },group Label:"Label"}
-    - results_pathway from db
-    - result-reaction from db
+
     - foldChanges from db
 
     """
 
 
-    data = Analysis.query.filter_by(dataset_id=study_id).all()
+    labels = {}
+    labels_case = {}
+    final =[]
 
 
-
-    temp = {}  ## keep track of pathways and their values
-    temp2 = {} ## reactions
-    temp3 = {} ## fold changes
-
-    for std in data:
-        inner_data = std.__dict__
-        results_reaction = inner_data["results_reaction"][0] # std.results_pathway[0]
-        results_pathway = inner_data["results_pathway"][0]
-        foldchanges_id = inner_data["metabolomics_data_id"]
-
-        for k, v in results_pathway.items():
-         if k not in temp:
-             temp.setdefault(k,[])
-             temp[k].append(v)
-         else:
-             temp[k].append(v)
-
-        for key, val in results_reaction.items():
-            if key not in temp2:
-                temp2.setdefault(key,[])
-                temp2[key].append(val)
+    for k,v in sample_data3["analysis"].items():
+        for metabol in v['Metabolites']:
+            if metabol not in list(labels.keys()):
+                labels.setdefault(metabol,[])
+                labels[metabol].append( v['Metabolites'][metabol])
             else:
-                temp2[key].append(val)
-
-        ids = db.session.query(MetabolomicsData.id).all()
-        for id in ids:
-            if id[0] == foldchanges_id:
-                data2 = MetabolomicsData.query.filter_by(id=id[0]).first()
-                for kk,vv in data2.metabolomics_data.items():
-                    if kk not in temp3:
-                        temp3.setdefault(kk, [])
-                        temp3[kk].append(vv)
-                    else:
-                        temp3[kk].append(vv)
+                labels[metabol].append( v['Metabolites'][metabol])
 
 
-    new_results_pathway = average(temp)
-    new_results_reaction = average(temp2)
-    new_foldChanges = average(temp3)
-
-    print (new_foldChanges)
-    print("#######################")
-    print(new_results_pathway)
-    print("#######################")
-    print(new_results_reaction)
+        if v["Label"].lower() not in labels_case:
+            labels_case.setdefault(v["Label"],[])
+            labels_case[v["Label"].lower()].append(v['Metabolites'])
+        else:
+            labels_case[v["Label"].lower()].append(v['Metabolites'])
 
 
-def average(dicte):
-    result = {}
-    for k,v in dicte.items():
-        avg = sum(v)/len(v)
-        result[k] = avg
-    return result
+    for key,value in labels_case.items():
+        metabolites = []
+        for m1 in value:
+            for k2,v2  in m1.items():
+                metabolites.append([k2,v2])
+        label_cases_avg = {}
+        for i in metabolites:
+            if i[0] not in list(label_cases_avg.keys()):
+                label_cases_avg.setdefault(i[0],[])
+                label_cases_avg[i[0]].append(i[1])
+            elif i[0] in list(label_cases_avg.keys()):
+                label_cases_avg[i[0]].append(i[1])
+
+        final.append([str(key)+" label avg",label_cases_avg])
+    final.append([str(sample_data3['group'])+" Group Avg",labels])
+    final_combined = average(final)
+    return final_combined
+
+
+
+
+
+
+def average(list_of_dicte):
+    final = {}
+    for case in list_of_dicte:
+        result = {}
+        for k,v in case[1].items():
+            avg = sum(v)/len(v)
+            result[k] = avg
+        final[case[0]] ={"Label":case[0],"Metabolites":result}
+
+    return final
 
 
 

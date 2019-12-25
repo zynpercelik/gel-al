@@ -508,7 +508,7 @@ def direct_pathway_mapping():
     user = User.query.get(1)
     # study_name =
     print(request.json)
-    study = Dataset(name=request.json['study_name'], method_id=2, status=True)
+    study = Dataset(name=request.json['study_name'], method_id=2, status=True,group=request.json["group"])
     db.session.add(study)
     db.session.commit()
 
@@ -523,6 +523,7 @@ def direct_pathway_mapping():
         db.session.commit()
 
         analysis = Analysis(name =key, user = user)
+        analysis.label = value['Label']
         analysis.name = key
         # analysis.status = True
         analysis.type = 'public'
