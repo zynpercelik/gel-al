@@ -30,7 +30,7 @@ def excel():
     for k,v in new_data.items():
         processed_data['analysis'][k] = v
     # processed_data['analysis']
-    print (processed_data)
+    # print (processed_data)
     return jsonify(processed_data)
 
 
@@ -124,7 +124,7 @@ def excel_data_Prpcessing(data, meta):
         temp_metabols = processed_users_data["analysis"][case]["Metabolites"]
         for blacklisted in blacklist:
             if blacklisted in list(temp_metabols.keys()):
-                print (blacklisted)
+                # print (blacklisted)
                 del processed_users_data["analysis"][case]["Metabolites"][blacklisted]
 
     processed_users_data["blacklist"] = blacklist
@@ -242,7 +242,7 @@ def mwlab_mapper():
     # print (name.split())
     std_id = temp_name[2].split(":")[1][2:]
     analysis_id = temp_name[3].split(":")[1][2:]
-    print (std_id,analysis_id)
+    # print (std_id,analysis_id)
     name = [std_id,analysis_id]
     blacklist = []
     mapped = {}
@@ -275,10 +275,10 @@ def mwlab_mapper():
         # print(len(blacklist))
         # print(blacklist)
         final = {"study_name":study_name,"analysis":mapped,"group":"not_provided","blacklist":blacklist}
-
-        new_data = group_avg(final)
-        for k2, v2 in new_data.items():
-            final['analysis'][k2] = v2
+        if len(list(final['analysis'].keys())) > 1:
+            new_data = group_avg(final,2)
+            for k2, v2 in new_data.items():
+                final['analysis'][k2] = v2
         return (final)
 
 
@@ -296,7 +296,7 @@ def mwlab_mapper():
 
 
 
-def group_avg(sample_data3):
+def group_avg(sample_data3,checker=1):
 
     """ a function to find group and labels averages for a given study
     inputs:
@@ -327,22 +327,37 @@ def group_avg(sample_data3):
         else:
             labels_case[v["Label"].lower()].append(v['Metabolites'])
 
+        if checker ==1:
+            for key,value in labels_case.items():
+                metabolites = []
+                for m1 in value:
+                    for k2,v2  in m1.items():
+                        metabolites.append([k2,v2])
+                label_cases_avg = {}
+                for i in metabolites:
+                    if i[0] not in list(label_cases_avg.keys()):
+                        label_cases_avg.setdefault(i[0],[])
+                        label_cases_avg[i[0]].append(i[1])
+                    elif i[0] in list(label_cases_avg.keys()):
+                        label_cases_avg[i[0]].append(i[1])
+            final.append([str(key)+" label avg",label_cases_avg])
+        else:
+            pass
+        # for key,value in labels_case.items():
+        #     metabolites = []
+        #     for m1 in value:
+        #         for k2,v2  in m1.items():
+        #             metabolites.append([k2,v2])
+        #     label_cases_avg = {}
+        #     for i in metabolites:
+        #         if i[0] not in list(label_cases_avg.keys()):
+        #             label_cases_avg.setdefault(i[0],[])
+        #             label_cases_avg[i[0]].append(i[1])
+        #         elif i[0] in list(label_cases_avg.keys()):
+        #             label_cases_avg[i[0]].append(i[1])
+        # final.append([str(key)+" label avg",label_cases_avg])
 
-    for key,value in labels_case.items():
-        metabolites = []
-        for m1 in value:
-            for k2,v2  in m1.items():
-                metabolites.append([k2,v2])
-        label_cases_avg = {}
-        for i in metabolites:
-            if i[0] not in list(label_cases_avg.keys()):
-                label_cases_avg.setdefault(i[0],[])
-                label_cases_avg[i[0]].append(i[1])
-            elif i[0] in list(label_cases_avg.keys()):
-                label_cases_avg[i[0]].append(i[1])
-
-        final.append([str(key)+" label avg",label_cases_avg])
-    final.append([str(sample_data3['group'])+" Group Avg",labels])
+    final.append(["Group Avg",labels])
     final_combined = average(final)
     return final_combined
 

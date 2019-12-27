@@ -24,7 +24,7 @@ class User(db.Model):
         "Analysis", back_populates="user", lazy='dynamic')
 
     def __repr__(self):
-        return '<User %r>' % self.email
+        return self.email
 
 class Method(db.Model):
     __tablename__ = 'methods'
@@ -66,6 +66,8 @@ class Dataset(db.Model):
     method = db.relationship('Method')
     status = db.Column(db.Boolean)
     group = db.Column(db.String())
+    disease_id = db.Column(db.Integer, db.ForeignKey('diseases.id'), nullable=True)
+    disease = db.relationship('Disease')
 
     def __repr__(self):
         return '<Disease %r>' % self.name

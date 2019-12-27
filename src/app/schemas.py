@@ -8,10 +8,12 @@ ma = Marshmallow(app)
 
 #
 class AnalysisInputSchema(Schema):
-    name = fields.String(required=True)
-    public = fields.String(required=True)
-    concentration_changes = fields.Dict(required=True)
-
+    study_name = fields.String(required=True)
+    public = fields.Boolean(required=True)
+    # concentration_changes = fields.Dict(required=True)
+    analysis = fields.Dict(required=True)
+    group = fields.String(required=True)
+    disease = fields.Integer(required=True)
 
 class PasswordChangeSchema(Schema):
     old_password = fields.String(required=True)

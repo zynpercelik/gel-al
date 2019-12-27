@@ -3,7 +3,7 @@ import pickle
 
 from metabolitics.preprocessing import MetaboliticsPipeline
 import celery
-from .models import db, Analysis
+from .models import db, Analysis, Dataset
 
 
 
@@ -25,8 +25,8 @@ def save_analysis(analysis_id, concentration_changes):
 
     analysis.results_reaction = analysis.clean_name_tag(results_reaction)
     analysis.results_pathway = analysis.clean_name_tag(results_pathway)
-
-    analysis.status = True
+    study = Dataset.query.get(analysis.dataset_id)
+    study.status = True
     analysis.end_time = datetime.datetime.now()
 
     db.session.commit()
