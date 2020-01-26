@@ -4,11 +4,11 @@ import pickle
 from metabolitics.preprocessing import MetaboliticsPipeline
 import celery
 from .models import db, Analysis, Dataset
-
+from .services.mail_service import *
 
 
 @celery.task()
-def save_analysis(analysis_id, concentration_changes):
+def save_analysis(analysis_id, concentration_changes,registered=True,mail='none',study2='none'):
 
     with open('../models/api_model.p', 'rb') as f:
         reaction_scaler = pickle.load(f)
@@ -30,5 +30,10 @@ def save_analysis(analysis_id, concentration_changes):
     analysis.end_time = datetime.datetime.now()
 
     db.session.commit()
+
+    if registered != True:
+        message = 'Hello, \n you can find your analysis results in the following link: \n http://metabolitics.biodb.sehir.edu.tr/past-analysis/'+str(analysis_id)
+        send_mail(mail,study2+' Analysis Results',message)
+
 
 

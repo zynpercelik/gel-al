@@ -15,6 +15,16 @@ class AnalysisInputSchema(Schema):
     group = fields.String(required=True)
     disease = fields.Integer(required=True)
 
+class AnalysisInputSchema2(Schema):
+    study_name = fields.String(required=True)
+    public = fields.Boolean(required=True)
+    # concentration_changes = fields.Dict(required=True)
+    analysis = fields.Dict(required=True)
+    group = fields.String(required=True)
+    disease = fields.Integer(required=True)
+    email = fields.String(required=True)
+
+
 class PasswordChangeSchema(Schema):
     old_password = fields.String(required=True)
     new_password = fields.String(required=True)

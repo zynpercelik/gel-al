@@ -327,35 +327,44 @@ def group_avg(sample_data3,checker=1):
         else:
             labels_case[v["Label"].lower()].append(v['Metabolites'])
 
-        if checker ==1:
-            for key,value in labels_case.items():
-                metabolites = []
-                for m1 in value:
-                    for k2,v2  in m1.items():
-                        metabolites.append([k2,v2])
-                label_cases_avg = {}
-                for i in metabolites:
-                    if i[0] not in list(label_cases_avg.keys()):
-                        label_cases_avg.setdefault(i[0],[])
-                        label_cases_avg[i[0]].append(i[1])
-                    elif i[0] in list(label_cases_avg.keys()):
-                        label_cases_avg[i[0]].append(i[1])
+
+    if len(list(labels_case.keys())) > 1:
+        # print(labels_case)
+        # print(list(labels_case.keys()))
+        print("ok")
+        for key,value in labels_case.items():
+            metabolites = []
+            for m1 in value:
+                for k2,v2  in m1.items():
+                    metabolites.append([k2,v2])
+            label_cases_avg = {}
+            for i in metabolites:
+                if i[0] not in list(label_cases_avg.keys()):
+                    label_cases_avg.setdefault(i[0],[])
+                    label_cases_avg[i[0]].append(i[1])
+                elif i[0] in list(label_cases_avg.keys()):
+                    label_cases_avg[i[0]].append(i[1])
+
             final.append([str(key)+" label avg",label_cases_avg])
-        else:
-            pass
-        # for key,value in labels_case.items():
-        #     metabolites = []
-        #     for m1 in value:
-        #         for k2,v2  in m1.items():
-        #             metabolites.append([k2,v2])
-        #     label_cases_avg = {}
-        #     for i in metabolites:
-        #         if i[0] not in list(label_cases_avg.keys()):
-        #             label_cases_avg.setdefault(i[0],[])
-        #             label_cases_avg[i[0]].append(i[1])
-        #         elif i[0] in list(label_cases_avg.keys()):
-        #             label_cases_avg[i[0]].append(i[1])
-        # final.append([str(key)+" label avg",label_cases_avg])
+            print(final)
+
+
+
+        # else:
+        #     pass
+            # for key,value in labels_case.items():
+            #     metabolites = []
+            #     for m1 in value:
+            #         for k2,v2  in m1.items():
+            #             metabolites.append([k2,v2])
+            #     label_cases_avg = {}
+            #     for i in metabolites:
+            #         if i[0] not in list(label_cases_avg.keys()):
+            #             label_cases_avg.setdefault(i[0],[])
+            #             label_cases_avg[i[0]].append(i[1])
+            #         elif i[0] in list(label_cases_avg.keys()):
+            #             label_cases_avg[i[0]].append(i[1])
+            # final.append([str(key)+" label avg",label_cases_avg])
 
     final.append(["Group Avg",labels])
     final_combined = average(final)

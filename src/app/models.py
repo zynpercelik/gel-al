@@ -160,7 +160,7 @@ class Analysis(db.Model):
     def clean_name_tag(self, dataset):
         cleaned_dataset = list()
         for d in dataset:
-            cleaned_dataset.append({k[:-4]: v for k, v in d.items()})
+            cleaned_dataset.append({k: v for k, v in d.items()})
         return cleaned_dataset
 
     def authenticated(self):
