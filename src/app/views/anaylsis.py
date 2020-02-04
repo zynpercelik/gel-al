@@ -137,7 +137,6 @@ def fva_analysis_public():
         disease=disease)
     db.session.add(study)
     db.session.commit()
-    print(2)
 
     #
     for key, value in request.json["analysis"].items():  # user as key, value {metaboldata , label}
@@ -151,7 +150,6 @@ def fva_analysis_public():
         metabolomics_data.disease = disease
         db.session.add(metabolomics_data)
         db.session.commit()
-        print(3)
 
         analysis = Analysis(name=key, user=user)
         analysis.name = key
@@ -165,7 +163,7 @@ def fva_analysis_public():
 
         db.session.add(analysis)
         db.session.commit()
-        print(4)
+        
         if check_value == counter:
             save_analysis.delay(analysis.id, value["Metabolites"],registered=False,mail=request.json["email"],study2=request.json['study_name'])
         else:
