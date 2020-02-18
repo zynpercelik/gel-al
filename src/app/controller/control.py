@@ -43,5 +43,31 @@ def search_product():
 @app.route('/search-trans', methods=['POST','GET'])
 def search_tran():
     return render_template('search_trans.html')
-    
-    
+
+
+@app.route('/searchdb-products', methods=['POST', 'GET'])
+def searchDB_product():
+
+    result = []
+    keyword  = request.form['data']
+    print(keyword)
+    db = {'batman toy':[1,150,20,'toy'],'white bag':[2,560,50,'bags'],'red bag':[3,560,50,'bags']} # name:[id,quantity, price, category]
+    for i in db:
+        if keyword in i:
+            result.append([i,db[i][0],db[i][1],db[i][2],db[i][3]])
+
+
+    return {"returned":result}
+
+@app.route('/adddb-products', methods=['POST', 'GET'])
+def addDB_product():
+
+    name  = request.form['product_name']
+    cat = request.form["Product_category"]
+    quant = request.form["quantity"]
+    price = request.form["price"]
+
+    print(name,cat,quant,price)
+
+
+    return {"1":'success'}

@@ -21,6 +21,9 @@ body {font-size:16px;}
   </div>
   <div class="w3-bar-block">
     <a href="{{ url_for('mainPage') }}"onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Main page</a>
+        <a href="{{ url_for('search_product') }}"onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Search Product</a>
+
+
   </div>
 </nav>
 
@@ -47,6 +50,31 @@ body {font-size:16px;}
     <p></p>
   </div>
 
+
+<h2>Enter the necessary information </h2>
+<form  action="{{ url_for('addDB_product') }}" method="post">
+
+  <label >Product name</label><br>
+  <input type="text"  name="product_name" ><br><br>
+
+  <label >Product category</label><br>
+  <input type="text"  name="Product_category" ><br><br>
+
+    <label >quantity</label><br>
+  <input type="text"  name="quantity" ><br><br>
+
+      <label >price:</label><br>
+  <input type="text"  name="price"><br><br>
+
+
+
+  <input type="submit" value="Add">
+
+
+</form>
+
+<p>If you click the "Add" button, the data will be saved in the system database.</p>
+    <p>note: if the product you add exists, only the quantity you enter will be added to DB</p>
 
 
 
