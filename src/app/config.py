@@ -5,7 +5,6 @@ import datetime
 class BaseConfig:
 
     SQLALCHEMY_DATABASE_URI = 'postgresql://test:123456789@localhost/postgres'
-    # SQLALCHEMY_DATABASE_URI = 'postgresql://biodblab:biodb+6859@db/AppDb'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JWT_EXPIRATION_DELTA = datetime.timedelta(days=25)
 
