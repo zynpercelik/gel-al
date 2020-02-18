@@ -9,3 +9,4 @@ How to Run:
 - go to src directory
 - open terminal 
 - type python run-api  // note im using python 3.5
+![Screenshot](shot1.png)
