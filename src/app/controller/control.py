@@ -51,13 +51,14 @@ def searchDB_product():
     result = []
     keyword  = request.form['data']
     print(keyword)
-    db = {'batman toy':[1,150,20,'toy'],'white bag':[2,560,50,'bags'],'red bag':[3,560,50,'bags']} # name:[id,quantity, price, category]
+    db = {'batman toy':[150,20,'toy'],'spiderman toy':[5000,10,'toy'],'white bag':[560,40,'bags'],'red bag':[320,50,'bags']} # name:[id,quantity, price, category]
     for i in db:
         if keyword in i:
-            result.append([i,db[i][0],db[i][1],db[i][2],db[i][3]])
+            result.append([i,db[i][0],db[i][1],db[i][2]])
+    print(result)
 
+    return render_template('result_table.html',result=result)
 
-    return {"returned":result}
 
 @app.route('/adddb-products', methods=['POST', 'GET'])
 def addDB_product():
@@ -66,7 +67,6 @@ def addDB_product():
     cat = request.form["Product_category"]
     quant = request.form["quantity"]
     price = request.form["price"]
-
     print(name,cat,quant,price)
 
 
