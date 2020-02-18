@@ -9,4 +9,6 @@ How to Run:
 - go to src directory
 - open terminal 
 - type python run-api  
+screenshot: 
+
 ![Screenshot](shot1.png)
