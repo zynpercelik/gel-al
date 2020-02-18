@@ -1,8 +1,9 @@
 # oss-v1
 online storage system
+-
 not ready yet!!!
 
-it a flask click application - psotgresql DB will be used
+it's a flask click application - psotgresql DB will be used
 
 How to Run:
 - go to src directory
