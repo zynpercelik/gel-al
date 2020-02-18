@@ -8,4 +8,7 @@ it's a flask click application - psotgresql DB will be used
 How to Run:
 - go to src directory
 - open terminal 
-- type python run-api  // note im using python 3.5
+- type python run-api  
+screenshot: 
+
+![Screenshot](shot1.png)
