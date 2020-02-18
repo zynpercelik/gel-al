@@ -5,7 +5,6 @@ import datetime
 class BaseConfig:
 
     SQLALCHEMY_DATABASE_URI = 'postgresql://test:123456789@localhost/postgres'
-    # SQLALCHEMY_DATABASE_URI = 'postgresql://biodblab:biodb+6859@db/AppDb'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JWT_EXPIRATION_DELTA = datetime.timedelta(days=25)
 
@@ -14,10 +13,6 @@ class BaseConfig:
     CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND',
                                       'redis://localhost:6379')
 
-    # try:
-    #     SECRET_KEY = open('../secret.txt').read()
-    # except:
-    #     print('Warning: You need to generate secret.txt file to use api')
 
 
 class ProductionConfig(BaseConfig):
