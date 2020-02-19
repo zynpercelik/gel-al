@@ -4,7 +4,8 @@ import datetime
 
 class BaseConfig:
 
-    SQLALCHEMY_DATABASE_URI = 'postgresql://test:123456789@localhost/postgres'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:123456789@localhost/oss'
+
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JWT_EXPIRATION_DELTA = datetime.timedelta(days=25)
 

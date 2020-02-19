@@ -7,56 +7,26 @@ from flask import Flask, render_template
 import time
 from ..app import app
 
-from ..models import db
+from ..models import db, Products, Customers, Transactions
 
 
 
-
-@app.route('/main', methods=['POST','GET'])
-def mainPage():
-    return render_template('main.html')
-
-
-
-@app.route('/add-customers', methods=['POST','GET'])
-def add_customer():
-    return render_template('add_customers.html')
-    
-    
-@app.route('/add-products', methods=['POST','GET'])
-def add_product():
-    return render_template('add_products.html')
-    
-@app.route('/add-trans', methods=['POST','GET'])
-def add_tran():
-    return render_template('add_trans.html')
-
-@app.route('/search-customers', methods=['POST','GET'])
-def search_customer():
-    return render_template('search_customers.html')
-    
-    
-@app.route('/search-products', methods=['POST','GET'])
-def search_product():
-    return render_template('search_products.html')
-
-@app.route('/search-trans', methods=['POST','GET'])
-def search_tran():
-    return render_template('search_trans.html')
 
 
 @app.route('/searchdb-products', methods=['POST', 'GET'])
 def searchDB_product():
 
     result = []
-    keyword  = request.form['data']
-    print(keyword)
-    db = {'batman toy':[150,20,'toy'],'spiderman toy':[5000,10,'toy'],'white bag':[560,40,'bags'],'red bag':[320,50,'bags']} # name:[id,quantity, price, category]
-    for i in db:
-        if keyword in i:
-            result.append([i,db[i][0],db[i][1],db[i][2]])
-    print(result)
-
+    keyword  = request.form['data'].strip()
+    if len(keyword) == 0:
+        keyword = '--empty--'
+    products = Products()
+    data = list(products.query.all())
+    for prod in data:
+        prod = str(prod).split(' <class')[0].split(",")
+        print(prod)
+        if keyword in prod[0]:
+            result.append([prod[0],prod[2],prod[1],prod[3]])
     return render_template('result_table.html',result=result)
 
 
@@ -67,7 +37,51 @@ def addDB_product():
     cat = request.form["Product_category"]
     quant = request.form["quantity"]
     price = request.form["price"]
+
     print(name,cat,quant,price)
 
+    products = Products()
+    products.price = price
+    products.name = name
+    products.quantity = quant
+    products.category = cat
+
+    db.session.add(products)
+    db.session.commit()
 
     return {"1":'success'}
+
+
+@app.route('/main', methods=['POST', 'GET'])
+def mainPage():
+    return render_template('main.html')
+
+
+@app.route('/add-customers', methods=['POST', 'GET'])
+def add_customer():
+    return render_template('add_customers.html')
+
+
+@app.route('/add-products', methods=['POST', 'GET'])
+def add_product():
+    return render_template('add_products.html')
+
+
+@app.route('/add-trans', methods=['POST', 'GET'])
+def add_tran():
+    return render_template('add_trans.html')
+
+
+@app.route('/search-customers', methods=['POST', 'GET'])
+def search_customer():
+    return render_template('search_customers.html')
+
+
+@app.route('/search-products', methods=['POST', 'GET'])
+def search_product():
+    return render_template('search_products.html')
+
+
+@app.route('/search-trans', methods=['POST', 'GET'])
+def search_tran():
+    return render_template('search_trans.html')

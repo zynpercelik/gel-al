@@ -31,7 +31,8 @@ class Products(db.Model):
     category = db.Column(db.String(255))
 
     def __repr__(self):
-        return (self.name,self.quantity)
+        return '{},{} ,{} ,{}'.format(self.name, self.price, self.quantity,self.category)
+
 
 class Transactions(db.Model):
     id = db.Column(db.Integer, primary_key=True)
