@@ -24,7 +24,7 @@ def searchDB_product():
     data = list(products.query.all())
     for prod in data:
         prod = str(prod).split(' <class')[0].split(",")
-        print(prod)
+        # print(prod)
         if keyword in prod[0]:
             result.append([prod[0],prod[2],prod[1],prod[3]])
     return render_template('result_table.html',result=result)
@@ -49,12 +49,18 @@ def addDB_product():
     db.session.add(products)
     db.session.commit()
 
-    return {"1":'success'}
+    return render_template('main.html')
 
 
 @app.route('/main', methods=['POST', 'GET'])
 def mainPage():
-    return render_template('main.html')
+    dicte  = dict(request.form)
+    if '1' in dicte:
+        return render_template('main_switch.html')
+    elif '2' in dicte:
+        return render_template('main.html')
+    else:
+        return render_template('main.html')
 
 
 @app.route('/add-customers', methods=['POST', 'GET'])
@@ -85,3 +91,5 @@ def search_product():
 @app.route('/search-trans', methods=['POST', 'GET'])
 def search_tran():
     return render_template('search_trans.html')
+
+

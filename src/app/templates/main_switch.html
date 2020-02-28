@@ -14,7 +14,7 @@ body {font-size:16px;}
 <body>
 
 <!-- Sidebar/menu -->
-<nav class="w3-sidebar w3-red w3-collapse w3-top w3-large w3-padding" style="z-index:3;width:300px;font-weight:bold;" id="mySidebar"><br>
+<nav class="w3-sidebar w3-blue w3-collapse w3-top w3-large w3-padding" style="z-index:3;width:300px;font-weight:bold;" id="mySidebar"><br>
   <a href="javascript:void(0)" onclick="w3_close()" class="w3-button w3-hide-large w3-display-topleft" style="width:100%;font-size:22px">Close Menu</a>
   <div class="w3-container">
     <h3 class="w3-padding-64"><b>Online Storage System</b></h3>
@@ -26,8 +26,8 @@ body {font-size:16px;}
 </nav>
 
 <!-- Top menu on small screens -->
-<header class="w3-container w3-top w3-hide-large w3-red w3-xlarge w3-padding">
-  <a href="javascript:void(0)" class="w3-button w3-red w3-margin-right" onclick="w3_open()">☰</a>
+<header class="w3-container w3-top w3-hide-large w3-blue w3-xlarge w3-padding">
+  <a href="javascript:void(0)" class="w3-button w3-blue w3-margin-right" onclick="w3_open()">☰</a>
   <span>Company Name</span>
 </header>
 
@@ -44,14 +44,14 @@ body {font-size:16px;}
 <!--  switch button-->
   <style>
 .button {
-  background-color: #f44336;
+  background-color: #008CBA;
   border: none;
   color: white;
   padding: 15px 32px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 16px;
+  font-size: 14px;
   margin: 4px 2px;
   cursor: pointer;
 }
@@ -59,10 +59,9 @@ body {font-size:16px;}
 
 <div>
    <form method="post" action="/main">
-    <input type="submit" class="button" value="Switch" name="1">
+    <input type="submit" class="button" value="Switch" name="2">
   </form>
   </div>
-
 <!--//////////////////-->
 
 
@@ -70,8 +69,8 @@ body {font-size:16px;}
 
   <!-- Services -->
   <div class="w3-container" id="services" style="margin-top:75px">
-    <h1 class="w3-xxxlarge w3-text-red"><b>Services.</b></h1>
-    <hr style="width:50px;border:5px solid red" class="w3-round">
+    <h1 class="w3-xxxlarge w3-text-blue"><b>Services.</b></h1>
+    <hr style="width:50px;border:5px solid blue" class="w3-round">
     <p>This system enable you to :</p>
 <ul>
   <li>Search Products, Customers and Transactions Details.</li>
@@ -84,8 +83,8 @@ body {font-size:16px;}
 
   <!-- Customers, Products , Transactions sections  -->
   <div class="w3-container" id="packages" style="margin-top:75px">
-    <h1 class="w3-xxxlarge w3-text-red"><b>Operations.</b></h1>
-    <hr style="width:50px;border:5px solid red" class="w3-round">
+    <h1 class="w3-xxxlarge w3-text-blue"><b>Operations.</b></h1>
+    <hr style="width:50px;border:5px solid blue" class="w3-round">
     <p></p>
   </div>
 
@@ -107,7 +106,7 @@ body {font-size:16px;}
     </div>
     <div class="w3-half">
       <ul class="w3-ul w3-light-grey w3-center">
-        <li class="w3-red w3-xlarge w3-padding-32">Products related operations</li>
+        <li class="w3-blue w3-xlarge w3-padding-32">Products related operations</li>
 
 <!--    <p> <a href="localhost:5000/search-products">Search Products</a>.</p>-->
       <a class="w3-padding-16"  href="{{ url_for('search_product') }}"><li class="w3-padding-16">Search Products</li></a>
@@ -119,7 +118,7 @@ body {font-size:16px;}
 
       <div class="w3-half"><br>
       <ul class="w3-ul w3-light-grey w3-center">
-        <li class="w3-red w3-xlarge w3-padding-32">Transactions History and related operations </li>
+        <li class="w3-blue w3-xlarge w3-padding-32">Transactions History and related operations </li>
         <a class="w3-padding-16"  href="{{ url_for('search_tran') }}"><li class="w3-padding-16">Search Transactions</li></a>
       <a class="w3-padding-16"  href="{{ url_for('add_tran') }}"><li class="w3-padding-16">add Transactions</li></a>
 <!--      <a class="w3-padding-16"  href="{{ url_for('search_product') }}"><li class="w3-padding-16">Search Products</li></a>-->
