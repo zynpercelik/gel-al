@@ -11,4 +11,4 @@ How to Run:
 - type python run-api  
 screenshot: 
 
-![Screenshot](shot1.png)
+![Screenshot](shot2.jpg)
