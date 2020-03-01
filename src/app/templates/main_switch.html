@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Allerta+Stencil">
+
+
 <style>
 body,h1,h2,h3,h4,h5 {font-family: "Poppins", sans-serif}
 body {font-size:16px;}
@@ -17,18 +21,18 @@ body {font-size:16px;}
 <nav class="w3-sidebar w3-blue w3-collapse w3-top w3-large w3-padding" style="z-index:3;width:300px;font-weight:bold;" id="mySidebar"><br>
   <a href="javascript:void(0)" onclick="w3_close()" class="w3-button w3-hide-large w3-display-topleft" style="width:100%;font-size:22px">Close Menu</a>
   <div class="w3-container">
-    <h3 class="w3-padding-64"><b>Online Storage System</b></h3>
+    <h3 class="w3-padding-64 w3-allerta"><b>Online Storage System</b></h3>
   </div>
   <div class="w3-bar-block">
-    <a href="#services" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Services</a>
-    <a href="#packages" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white">Operations</a>
+    <a href="#services" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white w3-allerta">Services</a>
+    <a href="#packages" onclick="w3_close()" class="w3-bar-item w3-button w3-hover-white w3-allerta">Operations</a>
   </div>
 </nav>
 
 <!-- Top menu on small screens -->
 <header class="w3-container w3-top w3-hide-large w3-blue w3-xlarge w3-padding">
   <a href="javascript:void(0)" class="w3-button w3-blue w3-margin-right" onclick="w3_open()">☰</a>
-  <span>Company Name</span>
+<!--  <span>Company Name</span>-->
 </header>
 
 <!-- Overlay effect when opening sidebar on small screens -->
@@ -52,9 +56,17 @@ body {font-size:16px;}
   text-decoration: none;
   display: inline-block;
   font-size: 14px;
+  font-style: oblique;
   margin: 4px 2px;
   cursor: pointer;
 }
+.w3-lobster {
+  font-family: "Lobster", serif;
+}
+.w3-allerta {
+  font-family: "Allerta Stencil", italic;
+}
+
 </style>
 
 <div>
@@ -66,14 +78,15 @@ body {font-size:16px;}
 
 
 
-
   <!-- Services -->
-  <div class="w3-container" id="services" style="margin-top:75px">
-    <h1 class="w3-xxxlarge w3-text-blue"><b>Services.</b></h1>
+  <div class="w3-container  w3-allerta" id="services" style="margin-top:75px">
+    <h1 class="w3-allerta w3-text-blue"><b>Services.</b></h1>
     <hr style="width:50px;border:5px solid blue" class="w3-round">
     <p>This system enable you to :</p>
+
+
 <ul>
-  <li>Search Products, Customers and Transactions Details.</li>
+  <li >Search Products, Customers and Transactions Details.</li>
   <li>Add Products, Customers and latest transactions to the database.</li>
   <li>more features can be added upon request.</li>
 </ul>
@@ -83,7 +96,7 @@ body {font-size:16px;}
 
   <!-- Customers, Products , Transactions sections  -->
   <div class="w3-container" id="packages" style="margin-top:75px">
-    <h1 class="w3-xxxlarge w3-text-blue"><b>Operations.</b></h1>
+    <h1 class="w3-allerta w3-text-blue"><b>Operations.</b></h1>
     <hr style="width:50px;border:5px solid blue" class="w3-round">
     <p></p>
   </div>
@@ -92,13 +105,13 @@ body {font-size:16px;}
     <div class="w3-half w3-margin-bottom">
 
       <ul class="w3-ul w3-light-grey w3-center">
-        <li class="w3-dark-grey w3-xlarge w3-padding-32">Customers related operations</li>
+        <li class="w3-dark-grey w3-allerta w3-padding-32">Customers related operations</li>
 <!--        <li class="w3-padding-16">Search Customers </li>-->
 <!--        <li class="w3-padding-16">add Customers </li>-->
 
 
-        <a class="w3-padding-16"  href="{{ url_for('search_customer') }}"><li class="w3-padding-16">Search Customers</li></a>
-      <a class="w3-padding-16"  href="{{ url_for('add_customer') }}"><li class="w3-padding-16">add Customers</li></a>
+        <a class="w3-padding-16 w3-allerta"  href="{{ url_for('search_customer') }}"><li class="w3-padding-16">Search Customers</li></a>
+      <a class="w3-padding-16 w3-allerta"  href="{{ url_for('add_customer') }}"><li class="w3-padding-16">add Customers</li></a>
 <!--        <li class="w3-light-grey w3-padding-24">-->
 <!--          <button class="w3-button w3-white w3-padding-large w3-hover-black">Sign Up</button>-->
 <!--        </li>-->
@@ -106,11 +119,11 @@ body {font-size:16px;}
     </div>
     <div class="w3-half">
       <ul class="w3-ul w3-light-grey w3-center">
-        <li class="w3-blue w3-xlarge w3-padding-32">Products related operations</li>
+        <li class="w3-blue w3-allerta w3-padding-32">Products related operations</li>
 
 <!--    <p> <a href="localhost:5000/search-products">Search Products</a>.</p>-->
-      <a class="w3-padding-16"  href="{{ url_for('search_product') }}"><li class="w3-padding-16">Search Products</li></a>
-        <a class="w3-padding-16" href="{{ url_for('add_product') }}"><li class="w3-padding-16">add Products</li></a>
+      <a class="w3-padding-16 w3-allerta"  href="{{ url_for('search_product') }}"><li class="w3-padding-16">Search Products</li></a>
+        <a class="w3-padding-16 w3-allerta" href="{{ url_for('add_product') }}"><li class="w3-padding-16">add Products</li></a>
 
       </ul>
     </div>
@@ -118,9 +131,9 @@ body {font-size:16px;}
 
       <div class="w3-half"><br>
       <ul class="w3-ul w3-light-grey w3-center">
-        <li class="w3-blue w3-xlarge w3-padding-32">Transactions History and related operations </li>
-        <a class="w3-padding-16"  href="{{ url_for('search_tran') }}"><li class="w3-padding-16">Search Transactions</li></a>
-      <a class="w3-padding-16"  href="{{ url_for('add_tran') }}"><li class="w3-padding-16">add Transactions</li></a>
+        <li class="w3-blue w3-allerta w3-padding-32">Transactions History and related operations </li>
+        <a class="w3-padding-16 w3-allerta"  href="{{ url_for('search_tran') }}"><li class="w3-padding-16">Search Transactions</li></a>
+      <a class="w3-padding-16 w3-allerta"  href="{{ url_for('add_tran') }}"><li class="w3-padding-16">add Transactions</li></a>
 <!--      <a class="w3-padding-16"  href="{{ url_for('search_product') }}"><li class="w3-padding-16">Search Products</li></a>-->
 
 <!--        <li class="w3-padding-16">Search Transactions</li>-->
