@@ -1,10 +1,7 @@
 from flask import jsonify, request
-from flask_jwt import jwt_required, current_identity
-from sqlalchemy import and_
-from sqlalchemy.types import Float
 from flask import Flask, render_template
+from .products_operations import search_products, add_products
 
-import time
 from ..app import app
 
 from ..models import db, Products, Customers, Transactions
@@ -16,38 +13,21 @@ from ..models import db, Products, Customers, Transactions
 @app.route('/searchdb-products', methods=['POST', 'GET'])
 def searchDB_product():
 
-    result = []
     keyword  = request.form['data'].strip()
     if len(keyword) == 0:
         keyword = '--empty--'
-    products = Products()
-    data = list(products.query.all())
-    for prod in data:
-        prod = str(prod).split(' <class')[0].split(",")
-        # print(prod)
-        if keyword in prod[0]:
-            result.append([prod[0],prod[2],prod[1],prod[3]])
+    result = search_products(keyword).result
+
     return render_template('result_table.html',result=result)
 
 
 @app.route('/adddb-products', methods=['POST', 'GET'])
 def addDB_product():
 
-    name  = request.form['product_name']
-    cat = request.form["Product_category"]
-    quant = request.form["quantity"]
-    price = request.form["price"]
-
-    print(name,cat,quant,price)
-
-    products = Products()
-    products.price = price
-    products.name = name
-    products.quantity = quant
-    products.category = cat
-
-    db.session.add(products)
-    db.session.commit()
+    data = dict(request.form)
+    result = search_products(data['product_name'][0]).result
+    if len(result) == 0:
+        add_products(data)
 
     return render_template('main.html')
 
