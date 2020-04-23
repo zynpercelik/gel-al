@@ -1,6 +1,6 @@
 from flask import jsonify, request
 from flask import Flask, render_template
-from .products_operations import search_products, add_products
+from .products_operations import search_products, add_products, USAdapter
 
 from ..app import app
 
@@ -16,7 +16,8 @@ def searchDB_product():
     keyword  = request.form['data'].strip()
     if len(keyword) == 0:
         keyword = '--empty--'
-    result = search_products(keyword).result
+    result = USAdapter(keyword).search_prod()
+    print(result)
 
     return render_template('result_table.html',result=result)
 

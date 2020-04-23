@@ -14,8 +14,9 @@ class search_products:
     1 - checks current products in DB.
     2 - search by a keyword for a product .
     """
-    def __init__(self,prodcut_name):
+    def __init__(self,prodcut_name,rate):
         self.product_name = prodcut_name
+        self.rate = rate
         self.data = self.get_DB_data()
         self.result = self.check_products()
 
@@ -31,7 +32,11 @@ class search_products:
         for prod in self.data:
             prod = str(prod).split(' <class')[0].split(",")
             if self.product_name in prod[0]:
-                result.append(list(map(lambda x: prod[x] , range(4))))
+                product_liste = list(map(lambda x: prod[x] , range(4)))
+                print(product_liste)
+                product_liste[1] = str(int(product_liste[1].strip()) / self.rate)[:3]
+                result.append(product_liste)
+
         return result
 
 
@@ -63,3 +68,41 @@ class add_products:
 
 
 
+
+
+
+
+
+
+class Currency(object):
+    rate = 1
+
+class EUEuro(Currency):
+    rate = 7.5
+
+class USDollar(Currency):
+    rate = 7.0
+
+
+class USAdapter(object):
+    rate = USDollar.rate
+    def __init__(self,keyword,rate = rate):
+        self.keyword = keyword
+        self.rate = rate
+
+    def search_prod(self):
+        data = search_products(self.keyword,self.rate).result
+        return data
+
+
+
+
+class EUAdapter(object):
+    rate = EUEuro.rate
+    def __init__(self,keyword,rate = rate):
+        self.keyword = keyword
+        self.rate = rate
+
+    def search_prod(self):
+        data = search_products(self.keyword,self.rate).result
+        return data

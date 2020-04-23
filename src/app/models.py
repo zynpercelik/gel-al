@@ -19,7 +19,6 @@ class Customers(db.Model):
     surname = db.Column(db.String(255))
     email = db.Column(db.String(255))
 
-
     def __repr__(self):
         return (self.name,self.email,self.id)
 
