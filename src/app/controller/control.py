@@ -26,7 +26,7 @@ def searchDB_product():
 def addDB_product():
 
     data = dict(request.form)
-    result = search_products(data['product_name'][0]).result
+    result = USAdapter(data['product_name'][0]).search_prod()
     if len(result) == 0:
         add_products(data)
 
