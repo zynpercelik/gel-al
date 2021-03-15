@@ -4,15 +4,15 @@ import datetime
 
 class BaseConfig:
 
-    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:123456789@localhost/oss'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:123456789@localhost/oss'  ## databse urls will be here, current one is random
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JWT_EXPIRATION_DELTA = datetime.timedelta(days=25)
 
-    CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL',
-                                  'redis://localhost:6379')
-    CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND',
-                                      'redis://localhost:6379')
+    # CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL',
+    #                               'redis://localhost:6379')
+    # CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND',
+    #                                   'redis://localhost:6379')
 
 
 

@@ -1,6 +1,6 @@
 from .models import *
-from .controller import *
-from .templates import *
+from .views import *
+# from .templates import *
 from .app import app
 
 

@@ -6,7 +6,7 @@ from __future__ import absolute_import
 import click
 import os
 from app.app import app
-from app.models import db
+# from app.models import db
 
 @click.group()
 def cli():
